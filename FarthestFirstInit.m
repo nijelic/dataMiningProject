@@ -66,7 +66,9 @@ function [PIc] = FarthestFirstInit(A, k, W)
   for i = 1:sizeA
     vecClass(1, C(1,i)) += 1;
   end
-  maxC = max(max(C));
+  maxC = max(max(vecClass));
+  maxCList = [1:(class-1)];
+  maxC = maxCList(1,vecClass==maxC);
   
   % putting largest connected component into same cluster
   PIc = zeros(sizeA, 1);
@@ -109,7 +111,7 @@ function [PIc] = FarthestFirstInit(A, k, W)
       
       control = 1;
       for j=1:i
-        if used(i,j)==maxClass(1,1)
+        if used(1,j)==maxClass(1,1)
           distancesMc(used(1,i),maxClass(1,1))=-1;
           control = 0;
           break;
