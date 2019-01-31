@@ -1,7 +1,9 @@
+% projections on the  top 15 principal axes + norm of vector
+
 function [train, test] = kernel(train, test)
     train = double(train);
     test = double(test);
-    [S,D,V] = svd(train);
+    [U,S,V] = svd(train);
     
     rowNorm = rownorm(train);
     train = train * V(:,1:15);

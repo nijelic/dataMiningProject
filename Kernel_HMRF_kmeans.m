@@ -7,5 +7,5 @@ function [class]=Kernel_HMRF_kmeans(S, k, W, tMax)
   alfa = ones(1, sizeK);
   K = K + max(max(K))*eye(sizeK);
   PIc = FarthestFirstInit(K, k, W);
-  class = kMeans(K, k, tMax, alfa,PIc);
+  class = kMeans(K, k, tMax, alfa, PIc);
 end

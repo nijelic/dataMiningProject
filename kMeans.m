@@ -1,44 +1,62 @@
 % K: kernel matrix, k: number of clusters,
-% tmax : optional maximum number of iterations, α: weight vector, 
-% PIc: optional initial clusters
+% tmax : optional maximum number of iterations, alfa: weight Row-vector, 
+% PIc: optional initial clusters as Vector
 
 function [PIc] = kMeans(K, k, tMax, alfa, PIc)
-    c = -1
+    
     % initialization
     sizeK = size(K, 1);
     distances = zeros(sizeK, k);
     if PIc == 0
       PIc = randi(k, sizeK, 1);
     end
-    c=0
+    if alfa == 0
+      alfa = ones(1, sizeK);
+    end
+    
     % algorithm
     for t = 1:tMax
+      
+      % computing d(Xi, Mc)
       for i = 1:sizeK
         for McI = 1:k
-          first = 2 * sum( (alfa(:,PIc==McI)).*K(i, PIc==McI))/sum(alfa(:,PIc==McI));
-          second = 0;
-          for j = 1:sizeK
-            for l = 1:sizeK
-              if PIc(j,1) == McI && PIc(l,1) == McI
-                second = second + alfa(1,j)*alfa(1,l)*K(j,l);
+          sumAlfa = sum(alfa(:,PIc==McI));
+          if sumAlfa != 0
+            first = 2 * sum( alfa(:,PIc==McI).*K(i, PIc==McI))/sumAlfa;
+            second = 0;
+            for j = 1:sizeK
+              for l = 1:sizeK
+                if PIc(j,1) == McI && PIc(l,1) == McI
+                  second = second + alfa(1,j)*alfa(1,l)*K(j,l);
+                end
               end
             end
+            second = second/(sumAlfa^2);
+          else
+            first = 0;
+            second = 0;
           end
-          second = second/(sum(alfa(:,PIc==McI))^2);
           distances(i,McI) = K(i,i) - first + second;
         end
       end
-      c=c+1
+
+      % changing cluster of each Xi, if needed
+      converged = 1;
       for i = 1:sizeK
         m = min(distances(i,:));
         for j = 1:k
           if m == distances(i,j)
+            if PIc(i,1) != j
+              converged = 0;
+            end
             PIc(i,1) = j;
             break;
           end
         end
-        c = c+ 2
       end
-      c=c+3
+      if converged == 1
+        break
+      end
+      
     end      
 end
